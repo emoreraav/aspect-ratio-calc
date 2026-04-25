@@ -2,6 +2,8 @@ const preset = document.getElementById('preset');
 const widthInput = document.getElementById('width');
 const heightInput = document.getElementById('height');
 const hzInput = document.getElementById('hz');
+const bitsInput = document.getElementById('bits');
+const colorspaceInput = document.getElementById('colorspace');
 const ratioWInput = document.getElementById('ratioW');
 const ratioHInput = document.getElementById('ratioH');
 const cableInfo = document.getElementById('cableInfo');
@@ -15,9 +17,11 @@ function getGCD(a, b) {
 function updateAll() {
     const w = parseInt(widthInput.value) || 1920;
     const h = parseInt(heightInput.value) || 1080;
-    const hz = parseInt(hzInput.value) || 60;
+    const hz = parseFloat(hzInput.value) || 60;
+    const bits = parseInt(bitsInput.value) || 8;
+    const colorspace = colorspaceInput.value;
 
-    // 1. Calcular Aspect Ratio
+    // 1. Aspect Ratio Calculation
     const common = getGCD(w, h);
     const rW = w / common;
     const rH = h / common;
@@ -27,44 +31,50 @@ function updateAll() {
         ratioHInput.value = rH;
     }
 
-    // 2. Lógica de Cable (Corregida)
-    const totalPixels = w * h * hz;
-    const fhd60 = 1920 * 1080 * 60;
-    const uHD60 = 3840 * 2160 * 60;
+    // 2. Connectivity Logic
+    const colorMultiplier = bits / 8;
+    const load = w * h * hz * colorMultiplier;
 
-    if (totalPixels <= fhd60) {
-        cableInfo.innerText = "HDMI 1.4 / SDI 3G / DP 1.2";
-    } else if (totalPixels <= uHD60) {
-        cableInfo.innerText = "HDMI 2.0 / SDI 12G / DP 1.4";
+    let cable = "";
+    if (load <= 2073600 * 60) {
+        cable = "HDMI 1.4 / SDI 3G / DP 1.2";
+    } else if (load <= 3840 * 2160 * 60) {
+        if (colorspace === 'rec2020' || bits > 8) {
+            cable = "HDMI 2.0a/b / SDI 12G / DP 1.4";
+        } else {
+            cable = "HDMI 2.0 / SDI 12G / DP 1.2";
+        }
     } else {
-        cableInfo.innerText = "HDMI 2.1 / DP 2.1 / SDI 24G";
+        cable = "HDMI 2.1 / SDI 24G / DP 2.1";
     }
+    cableInfo.innerText = cable;
 
-    // 3. VISTA PREVIA (Lógica de escalado basada en pixeles reales)
+    // 3. Scaled Preview
     const container = document.getElementById('previewContainer');
-    const contW = container.clientWidth - 40; // Margen de seguridad
-    const contH = container.clientHeight - 40;
+    const contW = container.clientWidth - 32;
+    const contH = container.clientHeight - 32;
 
     const ratio = w / h;
     const containerRatio = contW / contH;
 
     if (ratio > containerRatio) {
-        // La resolución es más ancha que el contenedor
         previewBox.style.width = `${contW}px`;
         previewBox.style.height = `${contW / ratio}px`;
     } else {
-        // La resolución es más alta que el contenedor
         previewBox.style.height = `${contH}px`;
         previewBox.style.width = `${contH * ratio}px`;
     }
 
-    previewText.innerText = `${w} x ${h} (${rW}:${rH})`;
+    const csLabel = colorspaceInput.options[colorspaceInput.selectedIndex].text.split(' ')[0];
+    previewText.innerText = `${w}x${h} | ${hz}Hz | ${bits}bit | ${csLabel}`;
 }
 
-// Control de Presets
+// Preset Handler
 preset.addEventListener('change', () => {
     const isCustom = preset.value === 'custom';
-    [widthInput, heightInput, hzInput].forEach(el => {
+    const controls = [widthInput, heightInput, hzInput, bitsInput, colorspaceInput];
+    
+    controls.forEach(el => {
         el.readOnly = !isCustom;
         el.disabled = !isCustom;
         el.style.opacity = isCustom ? "1" : "0.5";
@@ -75,16 +85,19 @@ preset.addEventListener('change', () => {
         widthInput.value = w;
         heightInput.value = h;
         hzInput.value = "60";
+        bitsInput.value = "8";
+        colorspaceInput.value = (w >= 3840) ? "rec2020" : "rec709";
     }
     updateAll();
 });
 
-// Eventos manuales
-widthInput.addEventListener('input', updateAll);
-heightInput.addEventListener('input', updateAll);
-hzInput.addEventListener('change', updateAll);
+// Update Listeners
+[widthInput, heightInput, hzInput, bitsInput, colorspaceInput].forEach(input => {
+    input.addEventListener('input', updateAll);
+    input.addEventListener('change', updateAll);
+});
 
-// Lógica de Ratio -> Resolución
+// Inverse Ratio Logic
 ratioWInput.addEventListener('input', () => {
     if (preset.value === 'custom' && ratioWInput.value > 0) {
         heightInput.value = Math.round((widthInput.value * ratioHInput.value) / ratioWInput.value);
@@ -99,5 +112,4 @@ ratioHInput.addEventListener('input', () => {
     }
 });
 
-// Forzar renderizado inicial
 window.onload = updateAll;
