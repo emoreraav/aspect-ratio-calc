@@ -3,105 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResoMaster Pro</title>
+    <title>ResoMaster Pro | Manual Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; }
         
-        /* Aseguramos que el contenedor tenga un tamaño fijo para el cálculo */
-        #previewContainer {
-            width: 100%;
-            height: 200px;
-            background: #050505;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #1a1a1a;
-            border-radius: 1rem;
-            overflow: hidden;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #000000;
         }
-
+        
+        #previewContainer { perspective: 1000px; }
+        
         #previewBox {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #ffffff;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
         }
 
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
             -webkit-appearance: none; margin: 0;
         }
 
-        .card { background: #0f0f0f; border: 1px solid #1a1a1a; }
-        input, select { background: transparent; outline: none; color: white; width: 100%; }
+        /* Estilo para inputs y selects */
+        .control-field {
+            background-color: #121212 !important;
+            border: 1px solid #333 !important;
+            color: white !important;
+            transition: border-color 0.2s;
+        }
+
+        .control-field:focus {
+            border-color: #666 !important;
+            outline: none;
+        }
+
+        option { background-color: #121212; color: white; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="text-white min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-[#0a0a0a] p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-[#1a1a1a]">
-        <header class="text-center mb-8">
-            <h1 class="text-2xl font-black tracking-tighter italic uppercase">ResoMaster Pro</h1>
-            <p class="text-gray-600 text-[10px] uppercase tracking-widest font-bold">Manual Engine</p>
+    <div class="bg-[#111111] p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-[#222]">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-black tracking-tighter text-white uppercase italic">RESOMASTER PRO</h1>
+            <p class="text-gray-500 text-[10px] uppercase tracking-[0.3em] font-bold">Manual Resolution Calculator</p>
         </header>
 
         <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="card p-4 rounded-xl">
-                <label class="block text-[9px] text-gray-500 uppercase mb-1">Width</label>
-                <input type="number" id="width" value="1920">
+            <div class="bg-[#121212] p-4 rounded-xl border border-[#222]">
+                <label class="block text-[9px] font-bold text-gray-500 uppercase mb-1 px-1">Width (px)</label>
+                <input type="number" id="width" class="w-full bg-transparent text-xl font-bold outline-none text-white" value="1920">
             </div>
-            <div class="card p-4 rounded-xl">
-                <label class="block text-[9px] text-gray-500 uppercase mb-1">Height</label>
-                <input type="number" id="height" value="1080">
+            <div class="bg-[#121212] p-4 rounded-xl border border-[#222]">
+                <label class="block text-[9px] font-bold text-gray-500 uppercase mb-1 px-1">Height (px)</label>
+                <input type="number" id="height" class="w-full bg-transparent text-xl font-bold outline-none text-white" value="1080">
             </div>
         </div>
 
         <div class="grid grid-cols-3 gap-3 mb-4">
-            <div class="card p-3 rounded-xl">
-                <label class="block text-[8px] text-gray-500 uppercase mb-1">Hz</label>
-                <select id="hz">
-                    <option value="24">24</option>
-                    <option value="30">30</option>
-                    <option value="60" selected>60</option>
-                    <option value="120">120</option>
+            <div class="bg-[#121212] p-3 rounded-xl border border-[#222]">
+                <label class="block text-[8px] font-bold text-gray-500 uppercase mb-1">Refresh</label>
+                <select id="hz" class="w-full bg-transparent text-xs font-bold outline-none">
+                    <option value="23.976">23.976</option>
+                    <option value="24">24 Hz</option>
+                    <option value="25">25 Hz</option>
+                    <option value="29.97">29.97</option>
+                    <option value="30">30 Hz</option>
+                    <option value="50">50 Hz</option>
+                    <option value="60" selected>60 Hz</option>
+                    <option value="120">120 Hz</option>
                 </select>
             </div>
-            <div class="card p-3 rounded-xl">
-                <label class="block text-[8px] text-gray-500 uppercase mb-1">Bits</label>
-                <select id="bits">
+            <div class="bg-[#121212] p-3 rounded-xl border border-[#222]">
+                <label class="block text-[8px] font-bold text-gray-500 uppercase mb-1">Depth</label>
+                <select id="bits" class="w-full bg-transparent text-xs font-bold outline-none">
                     <option value="8" selected>8-bit</option>
                     <option value="10">10-bit</option>
+                    <option value="12">12-bit</option>
                 </select>
             </div>
-            <div class="card p-3 rounded-xl">
-                <label class="block text-[8px] text-gray-500 uppercase mb-1">Color</label>
-                <select id="colorspace">
-                    <option value="rec709" selected>709</option>
-                    <option value="rec2020">2020</option>
+            <div class="bg-[#121212] p-3 rounded-xl border border-[#222]">
+                <label class="block text-[8px] font-bold text-gray-500 uppercase mb-1">Color</label>
+                <select id="colorspace" class="w-full bg-transparent text-[10px] font-bold outline-none">
+                    <option value="rec709" selected>Rec.709</option>
+                    <option value="p3">DCI-P3</option>
+                    <option value="rec2020">Rec.2020</option>
                 </select>
             </div>
         </div>
 
-        <div class="card p-4 rounded-xl mb-6 text-center">
-            <label class="block text-[9px] text-gray-500 uppercase mb-1">Aspect Ratio</label>
-            <div class="flex justify-center font-bold text-xl">
-                <input type="number" id="ratioW" class="text-right w-12" placeholder="16">
-                <span class="mx-2 text-gray-700">:</span>
-                <input type="number" id="ratioH" class="text-left w-12" placeholder="9">
+        <div class="bg-[#121212] p-4 rounded-xl border border-[#222] mb-8">
+            <label class="block text-[9px] font-bold text-gray-500 uppercase mb-1 text-center">Calculated Aspect Ratio</label>
+            <div class="flex items-center text-white font-black justify-center text-xl">
+                <input type="number" id="ratioW" class="w-12 bg-transparent outline-none text-right" placeholder="16">
+                <span class="px-2 text-gray-700">:</span>
+                <input type="number" id="ratioH" class="w-12 bg-transparent outline-none text-left" placeholder="9">
             </div>
         </div>
 
-        <div id="previewContainer" class="mb-6">
+        <div class="mb-8 h-48 bg-black rounded-2xl border border-[#222] flex items-center justify-center p-4 overflow-hidden" id="previewContainer">
             <div id="previewBox">
-                <span id="previewText" class="text-[9px] font-mono font-bold bg-black/50 px-1"></span>
+                <span id="previewText" class="text-[10px] font-mono text-white font-bold whitespace-nowrap opacity-60"></span>
             </div>
         </div>
 
-        <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-            <p class="text-[8px] text-gray-500 uppercase mb-1">Required Cable</p>
-            <div id="cableInfo" class="text-xs font-bold italic">---</div>
+        <div class="p-5 bg-white/[0.02] rounded-2xl border border-[#222]">
+            <p class="text-[9px] text-gray-600 font-black uppercase mb-1 tracking-widest text-center">Minimum Connectivity Requirement</p>
+            <div id="cableInfo" class="text-sm font-bold text-white text-center italic tracking-tight">---</div>
         </div>
     </div>
 
