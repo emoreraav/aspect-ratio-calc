@@ -3,81 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResoMaster - Calculadora Pro</title>
+    <title>ResoMaster Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        #previewBox {
-            transition: all 0.3s ease-out;
-            min-width: 10px;
-            min-height: 10px;
+        #previewContainer {
+            perspective: 1000px;
         }
-        /* Eliminar flechas de los inputs de número */
+        #previewBox {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid rgba(59, 130, 246, 0.8);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
             -webkit-appearance: none; margin: 0;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#0f172a] text-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-800">
-        <header class="text-center mb-6">
-            <h1 class="text-2xl font-black tracking-tighter text-blue-400">RESOMASTER PRO</h1>
-            <p class="text-slate-500 text-xs uppercase tracking-widest">Calculadora de Resolución</p>
+    <div class="bg-[#1e293b] p-8 rounded-[2.5rem] shadow-2xl w-full max-w-md border border-slate-800">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-black tracking-tighter text-blue-400 italic">RESOMASTER PRO</h1>
+            <p class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold">Calculadora de Resolución</p>
         </header>
 
-        <div class="mb-4">
-            <select id="preset" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-sm">
+        <div class="mb-6">
+            <select id="preset" class="w-full p-4 rounded-2xl bg-[#0f172a] border border-slate-700 outline-none text-sm font-medium focus:ring-2 focus:ring-blue-500 transition-all">
                 <option value="custom">⚙️ Personalizado (Libre)</option>
                 <option value="1280x720">HD (720p)</option>
                 <option value="1920x1080" selected>Full HD (1080p)</option>
                 <option value="2560x1440">QHD (2K)</option>
                 <option value="3840x2160">UHD (4K)</option>
-                <option value="1080x1920">Vertical (TikTok)</option>
+                <option value="1080x1920">Vertical (TikTok/Mobile)</option>
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Ancho</label>
-                <input type="number" id="width" class="w-full bg-transparent text-lg font-mono text-blue-400 outline-none opacity-50" value="1920" readonly>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="bg-[#0f172a] p-4 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Ancho</label>
+                <input type="number" id="width" class="w-full bg-transparent text-xl font-bold text-blue-400 outline-none opacity-50" value="1920" readonly>
             </div>
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Alto</label>
-                <input type="number" id="height" class="w-full bg-transparent text-lg font-mono text-blue-400 outline-none opacity-50" value="1080" readonly>
+            <div class="bg-[#0f172a] p-4 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Alto</label>
+                <input type="number" id="height" class="w-full bg-transparent text-xl font-bold text-blue-400 outline-none opacity-50" value="1080" readonly>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Refresco</label>
-                <select id="hz" class="w-full bg-transparent text-sm outline-none opacity-50" disabled>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-[#0f172a] p-4 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Refresco</label>
+                <select id="hz" class="w-full bg-transparent text-lg font-bold outline-none opacity-50" disabled>
                     <option value="24">24 Hz</option>
+                    <option value="30">30 Hz</option>
                     <option value="60" selected>60 Hz</option>
                     <option value="120">120 Hz</option>
                     <option value="240">240 Hz</option>
                 </select>
             </div>
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Aspect Ratio</label>
-                <div class="flex text-emerald-400 font-bold font-mono">
-                    <input id="ratioW" class="w-full bg-transparent outline-none text-center" placeholder="W">
-                    <span>:</span>
-                    <input id="ratioH" class="w-full bg-transparent outline-none text-center" placeholder="H">
+            <div class="bg-[#0f172a] p-4 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Aspect Ratio</label>
+                <div class="flex items-center text-emerald-400 text-xl font-bold">
+                    <input type="number" id="ratioW" class="w-full bg-transparent outline-none text-center" placeholder="16">
+                    <span class="px-1 text-slate-700">:</span>
+                    <input type="number" id="ratioH" class="w-full bg-transparent outline-none text-center" placeholder="9">
                 </div>
             </div>
         </div>
 
-        <div class="mb-6">
-            <div class="w-full h-40 bg-black rounded-xl border border-slate-800 flex items-center justify-center relative overflow-hidden">
-                <div id="previewBox" class="bg-blue-500/20 border border-blue-500/60 flex items-center justify-center">
-                    <span id="previewText" class="text-[9px] font-mono text-blue-300"></span>
-                </div>
+        <div class="mb-8 h-48 bg-black rounded-[1.5rem] border border-slate-800 flex items-center justify-center p-6 overflow-hidden" id="previewContainer">
+            <div id="previewBox">
+                <span id="previewText" class="text-[10px] font-mono text-blue-300 font-bold whitespace-nowrap"></span>
             </div>
         </div>
 
-        <div class="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
-            <p class="text-[10px] text-blue-400 font-bold uppercase mb-1">Conectividad Mínima</p>
-            <div id="cableInfo" class="text-sm font-medium text-white">---</div>
+        <div class="p-5 bg-blue-500/5 rounded-3xl border border-blue-500/20 shadow-inner">
+            <p class="text-[10px] text-blue-500 font-black uppercase mb-1 tracking-widest">Conectividad Mínima</p>
+            <div id="cableInfo" class="text-lg font-bold text-slate-100 italic tracking-tight">---</div>
         </div>
     </div>
 
