@@ -1,87 +1,80 @@
-const widthInput = document.getElementById('width');
-const heightInput = document.getElementById('height');
-const hzInput = document.getElementById('hz');
-const bitsInput = document.getElementById('bits');
-const colorspaceInput = document.getElementById('colorspace');
-const ratioWInput = document.getElementById('ratioW');
-const ratioHInput = document.getElementById('ratioH');
-const cableInfo = document.getElementById('cableInfo');
+// Referencias
+const widthIn = document.getElementById('width');
+const heightIn = document.getElementById('height');
+const hzIn = document.getElementById('hz');
+const bitsIn = document.getElementById('bits');
+const csIn = document.getElementById('colorspace');
+const rWIn = document.getElementById('ratioW');
+const rHIn = document.getElementById('ratioH');
+
+const cableText = document.getElementById('cableInfo');
 const previewBox = document.getElementById('previewBox');
 const previewText = document.getElementById('previewText');
-const previewContainer = document.getElementById('previewContainer');
+const container = document.getElementById('previewContainer');
 
+// Función de Máximo Común Divisor
 function getGCD(a, b) {
     return b ? getGCD(b, a % b) : a;
 }
 
-function updateAll() {
-    // Tomamos los valores o ponemos 1 por defecto para evitar divisiones por cero
-    const w = parseInt(widthInput.value) || 1;
-    const h = parseInt(heightInput.value) || 1;
-    const hz = parseFloat(hzInput.value) || 60;
-    const bits = parseInt(bitsInput.value) || 8;
-    const colorspace = colorspaceInput.value;
+function calculate() {
+    // 1. Obtener valores
+    const w = parseInt(widthIn.value) || 1920;
+    const h = parseInt(heightIn.value) || 1080;
+    const hz = parseFloat(hzIn.value);
+    const bits = parseInt(bitsIn.value);
 
-    // 1. Calcular Aspect Ratio automáticamente
-    const common = getGCD(w, h);
-    const rW = w / common;
-    const rH = h / common;
+    // 2. Aspect Ratio (Simplificación)
+    const gcd = getGCD(w, h);
+    const aspectW = w / gcd;
+    const aspectH = h / gcd;
+
+    // Solo actualizamos si no estamos escribiendo en los ratios
+    if (document.activeElement !== rWIn && document.activeElement !== rHIn) {
+        rWIn.value = aspectW;
+        rHIn.value = aspectH;
+    }
+
+    // 3. Visualizador
+    const maxW = container.offsetWidth - 40;
+    const maxH = container.offsetHeight - 40;
     
-    // Solo actualiza los campos de ratio si el usuario no los está tocando
-    if (document.activeElement !== ratioWInput && document.activeElement !== ratioHInput) {
-        ratioWInput.value = rW;
-        ratioHInput.value = rH;
-    }
+    const ratioRes = w / h;
+    const ratioCont = maxW / maxH;
 
-    // 2. Recomendación de Conexión
+    if (ratioRes > ratioCont) {
+        previewBox.style.width = maxW + "px";
+        previewBox.style.height = (maxW / ratioRes) + "px";
+    } else {
+        previewBox.style.height = maxH + "px";
+        previewBox.style.width = (maxH * ratioRes) + "px";
+    }
+    
+    previewText.innerText = w + "x" + h;
+
+    // 4. Cable
     const load = w * h * hz * (bits / 8);
-    if (load <= 1920 * 1080 * 60) {
-        cableInfo.innerText = "HDMI 1.4 / SDI 3G / DP 1.2";
-    } else if (load <= 3840 * 2160 * 60) {
-        cableInfo.innerText = (bits > 8 || colorspace === 'rec2020') ? "HDMI 2.0a/b / SDI 12G / DP 1.4" : "HDMI 2.0 / SDI 12G / DP 1.2";
-    } else {
-        cableInfo.innerText = "HDMI 2.1 / SDI 24G / DP 2.1";
-    }
-
-    // 3. Dibujar el Visualizador
-    const contW = previewContainer.clientWidth - 40;
-    const contH = previewContainer.clientHeight - 40;
-    const resRatio = w / h;
-    const containerRatio = contW / contH;
-
-    if (resRatio > containerRatio) {
-        previewBox.style.width = `${contW}px`;
-        previewBox.style.height = `${contW / resRatio}px`;
-    } else {
-        previewBox.style.height = `${contH}px`;
-        previewBox.style.width = `${contH * resRatio}px`;
-    }
-
-    previewText.innerText = `${w}x${h} | ${hz}Hz | ${bits}bit`;
+    if (load <= 2073600 * 60) cableText.innerText = "HDMI 1.4 / SDI 3G";
+    else if (load <= 8294400 * 60) cableText.innerText = "HDMI 2.0 / SDI 12G";
+    else cableText.innerText = "HDMI 2.1 / DP 2.1";
 }
 
-// Escuchar cambios en todos los inputs
-[widthInput, heightInput, hzInput, bitsInput, colorspaceInput].forEach(el => {
-    el.addEventListener('input', updateAll);
-    el.addEventListener('change', updateAll);
-});
+// Listeners manuales para asegurar que se dispare
+widthIn.oninput = calculate;
+heightIn.oninput = calculate;
+hzIn.onchange = calculate;
+bitsIn.onchange = calculate;
+csIn.onchange = calculate;
 
-// Lógica Inversa: Si cambias el Ratio, se calcula la Resolución
-ratioWInput.addEventListener('input', () => {
-    if (ratioWInput.value > 0) {
-        heightInput.value = Math.round((widthInput.value * ratioHInput.value) / ratioWInput.value);
-        updateAll();
-    }
-});
+// Lógica inversa para los ratios
+rWIn.oninput = () => {
+    heightIn.value = Math.round((widthIn.value * rHIn.value) / rWIn.value);
+    calculate();
+};
+rHIn.oninput = () => {
+    widthIn.value = Math.round((heightIn.value * rWIn.value) / rHIn.value);
+    calculate();
+};
 
-ratioHInput.addEventListener('input', () => {
-    if (ratioHInput.value > 0) {
-        widthInput.value = Math.round((heightInput.value * ratioWInput.value) / ratioHInput.value);
-        updateAll();
-    }
-});
-
-// Arrancar al cargar la página
-window.addEventListener('load', updateAll);
-// También al redimensionar la ventana para que el visualizador no se rompa
-window.addEventListener('resize', updateAll);
+// Iniciar al cargar
+window.onload = calculate;
