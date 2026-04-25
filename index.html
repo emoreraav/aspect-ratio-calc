@@ -1,15 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResoMaster - Calculadora de Resoluciones</title>
+    <title>ResoMaster - Calculadora Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         #previewBox {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease-out;
+            min-width: 10px;
+            min-height: 10px;
         }
+        /* Eliminar flechas de los inputs de número */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
             -webkit-appearance: none; margin: 0;
         }
@@ -17,72 +19,65 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-slate-900 p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-800">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                RESOMASTER PRO
-            </h1>
-            <p class="text-slate-500 text-sm mt-1">Calculadora de Aspect Ratio y Conectividad</p>
+    <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-800">
+        <header class="text-center mb-6">
+            <h1 class="text-2xl font-black tracking-tighter text-blue-400">RESOMASTER PRO</h1>
+            <p class="text-slate-500 text-xs uppercase tracking-widest">Calculadora de Resolución</p>
         </header>
 
-        <div class="mb-6">
-            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 ml-1">Perfil</label>
-            <select id="preset" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer">
-                <option value="custom">⚙️ Personalizado (Desbloqueado)</option>
+        <div class="mb-4">
+            <select id="preset" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-sm">
+                <option value="custom">⚙️ Personalizado (Libre)</option>
                 <option value="1280x720">HD (720p)</option>
                 <option value="1920x1080" selected>Full HD (1080p)</option>
                 <option value="2560x1440">QHD (2K)</option>
                 <option value="3840x2160">UHD (4K)</option>
-                <option value="7680x4320">FUHD (8K)</option>
-                <option value="1080x1920">Vertical (TikTok/Stories)</option>
+                <option value="1080x1920">Vertical (TikTok)</option>
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Ancho (px)</label>
-                <input type="number" id="width" class="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 outline-none font-mono text-blue-400 opacity-50" value="1920" readonly>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Ancho</label>
+                <input type="number" id="width" class="w-full bg-transparent text-lg font-mono text-blue-400 outline-none opacity-50" value="1920" readonly>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Alto (px)</label>
-                <input type="number" id="height" class="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 outline-none font-mono text-blue-400 opacity-50" value="1080" readonly>
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Alto</label>
+                <input type="number" id="height" class="w-full bg-transparent text-lg font-mono text-blue-400 outline-none opacity-50" value="1080" readonly>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Refresco (Hz)</label>
-                <select id="hz" class="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 focus:ring-2 focus:ring-blue-500 outline-none opacity-50" disabled>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Refresco</label>
+                <select id="hz" class="w-full bg-transparent text-sm outline-none opacity-50" disabled>
                     <option value="24">24 Hz</option>
-                    <option value="30">30 Hz</option>
                     <option value="60" selected>60 Hz</option>
                     <option value="120">120 Hz</option>
-                    <option value="144">144 Hz</option>
                     <option value="240">240 Hz</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Aspect Ratio</label>
-                <div class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                    <input type="number" id="ratioW" class="w-full bg-transparent text-center outline-none text-emerald-400 font-bold" placeholder="W">
-                    <span class="text-slate-600">:</span>
-                    <input type="number" id="ratioH" class="w-full bg-transparent text-center outline-none text-emerald-400 font-bold" placeholder="H">
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Aspect Ratio</label>
+                <div class="flex text-emerald-400 font-bold font-mono">
+                    <input id="ratioW" class="w-full bg-transparent outline-none text-center" placeholder="W">
+                    <span>:</span>
+                    <input id="ratioH" class="w-full bg-transparent outline-none text-center" placeholder="H">
                 </div>
             </div>
         </div>
 
-        <div class="mb-8">
-            <div class="relative w-full h-40 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center overflow-hidden">
-                <div id="previewBox" class="bg-blue-500/10 border-2 border-blue-500/50 flex items-center justify-center rounded-sm">
-                    <span id="previewText" class="text-[10px] font-mono text-blue-400 font-bold">1920x1080</span>
+        <div class="mb-6">
+            <div class="w-full h-40 bg-black rounded-xl border border-slate-800 flex items-center justify-center relative overflow-hidden">
+                <div id="previewBox" class="bg-blue-500/20 border border-blue-500/60 flex items-center justify-center">
+                    <span id="previewText" class="text-[9px] font-mono text-blue-300"></span>
                 </div>
             </div>
-            <div id="resultRatio" class="text-center mt-2 text-xs font-bold text-slate-500 uppercase tracking-widest">Ratio: 16:9</div>
         </div>
 
-        <div class="p-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-blue-500/20 shadow-inner">
-            <p class="text-[10px] text-blue-400 uppercase font-black mb-1 tracking-tighter">Cable Mínimo Recomendado</p>
-            <div id="cableInfo" class="text-lg font-bold text-white tracking-tight">Cargando...</div>
+        <div class="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+            <p class="text-[10px] text-blue-400 font-bold uppercase mb-1">Conectividad Mínima</p>
+            <div id="cableInfo" class="text-sm font-medium text-white">---</div>
         </div>
     </div>
 
